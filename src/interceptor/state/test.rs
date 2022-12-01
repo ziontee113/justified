@@ -62,8 +62,24 @@ mod state_test {
     #[test]
     fn can_add_or_remove_fragment_base_on_incoming_fragment_value() {
         let mut state = State::new();
-        let l1_32_down = IncomingFragment::new("L1", 32, 1, mipoch(0));
 
+        let l1_32_down = IncomingFragment::new("L1", 32, 1, mipoch(0));
         state.receive(&l1_32_down);
+        assert_eq!(state.fragments().len(), 1);
+        fragment_has_contents(state.fragments().get(0).unwrap(), "L1", 32, 1, mipoch(0));
+
+        let l1_33_down = IncomingFragment::new("L1", 33, 1, mipoch(10));
+        state.receive(&l1_33_down);
+        assert_eq!(state.fragments().len(), 2);
+        fragment_has_contents(state.fragments().get(1).unwrap(), "L1", 33, 1, mipoch(10));
+
+        let l1_33_up = IncomingFragment::new("L1", 33, 0, mipoch(40));
+        state.receive(&l1_33_up);
+        assert_eq!(state.fragments().len(), 1);
+        fragment_has_contents(state.fragments().get(0).unwrap(), "L1", 32, 1, mipoch(0));
+
+        let l1_32_up = IncomingFragment::new("L1", 32, 0, mipoch(58));
+        state.receive(&l1_32_up);
+        assert_eq!(state.fragments().len(), 0);
     }
 }

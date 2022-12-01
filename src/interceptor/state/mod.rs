@@ -11,8 +11,14 @@ impl State {
         Self { fragments: vec![] }
     }
 
-    pub fn receive(&self, fragment: &IncomingFragment) {
-        // TODO:
+    pub fn receive(&mut self, fragment: &IncomingFragment) {
+        if fragment.value() == 0 {
+            self.remove_fragment(fragment);
+        }
+
+        if fragment.value() == 1 {
+            self.add_fragment(fragment.clone());
+        }
     }
 
     pub fn fragments(&self) -> &[IncomingFragment] {
