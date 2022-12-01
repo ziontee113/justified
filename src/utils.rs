@@ -1,5 +1,7 @@
 use std::time::{Duration, SystemTime};
 
-pub fn millis_from_epoch(milis: u64) -> SystemTime {
+/// Returns a timestamp elasped `milis` milliseconds from UNIX EPOCH.
+/// For easy testing purposes only.
+pub fn mipoch(milis: u64) -> SystemTime {
     SystemTime::UNIX_EPOCH + Duration::from_millis(milis)
 }
