@@ -25,9 +25,8 @@ impl State {
         self.fragments.push(fragment);
     }
 
-    fn remove_fragment(&mut self, fragment: &IncomingFragment) {
-        self.fragments.retain(|f| {
-            !(f.code() == fragment.code() && f.device_alias() == fragment.device_alias())
-        });
+    fn remove_fragment(&mut self, incoming_fragment: &IncomingFragment) {
+        self.fragments
+            .retain(|f| !f.has_same_key(incoming_fragment));
     }
 }

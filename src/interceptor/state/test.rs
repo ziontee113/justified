@@ -14,8 +14,8 @@ mod state_test {
         value: i32,
         timestamp: SystemTime,
     ) {
-        assert_eq!(fragment.device_alias(), device_alias);
-        assert_eq!(fragment.code(), code);
+        assert_eq!(fragment.key().device_alias(), device_alias);
+        assert_eq!(fragment.key().code(), code);
         assert_eq!(fragment.value(), value);
         assert_eq!(fragment.timestamp(), timestamp);
     }
