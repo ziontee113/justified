@@ -57,26 +57,33 @@ fn can_remove_fragment_base_on_alias_and_code() {
     assert_eq!(state.fragments().len(), 0);
 }
 
+fn receive_new_fragment(
+    state: &mut State,
+    device_alias: &str,
+    code: u16,
+    value: i32,
+    timestamp: SystemTime,
+) {
+    let fragment = IncomingFragment::new(device_alias, code, value, timestamp);
+    state.receive(&fragment);
+}
+
 #[test]
 fn can_add_or_remove_fragment_base_on_incoming_fragment_value() {
     let mut state = State::new();
 
-    let l1_32_down = IncomingFragment::new("L1", 32, 1, mipoch(0));
-    state.receive(&l1_32_down);
+    receive_new_fragment(&mut state, "L1", 32, 1, mipoch(0));
     assert_eq!(state.fragments().len(), 1);
     fragment_has_contents(state.fragments().get(0).unwrap(), "L1", 32, 1, mipoch(0));
 
-    let l1_33_down = IncomingFragment::new("L1", 33, 1, mipoch(10));
-    state.receive(&l1_33_down);
+    receive_new_fragment(&mut state, "L1", 33, 1, mipoch(10));
     assert_eq!(state.fragments().len(), 2);
     fragment_has_contents(state.fragments().get(1).unwrap(), "L1", 33, 1, mipoch(10));
 
-    let l1_33_up = IncomingFragment::new("L1", 33, 0, mipoch(40));
-    state.receive(&l1_33_up);
+    receive_new_fragment(&mut state, "L1", 33, 0, mipoch(40));
     assert_eq!(state.fragments().len(), 1);
     fragment_has_contents(state.fragments().get(0).unwrap(), "L1", 32, 1, mipoch(0));
 
-    let l1_32_up = IncomingFragment::new("L1", 32, 0, mipoch(58));
-    state.receive(&l1_32_up);
+    receive_new_fragment(&mut state, "L1", 32, 0, mipoch(58));
     assert_eq!(state.fragments().len(), 0);
 }
