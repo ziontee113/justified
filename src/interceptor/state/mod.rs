@@ -1,3 +1,4 @@
+#[cfg(test)]
 mod test;
 
 use super::incoming_fragment::IncomingFragment;
