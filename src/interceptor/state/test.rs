@@ -87,3 +87,12 @@ fn can_add_or_remove_fragment_base_on_incoming_fragment_value() {
     receive_new_fragment(&mut state, "L1", 32, 0, mipoch(58));
     assert_eq!(state.fragments().len(), 0);
 }
+
+#[test]
+fn can_turn_fragments_vec_to_string() {
+    let mut state = State::new();
+    receive_new_fragment(&mut state, "L1", 32, 1, mipoch(0));
+    receive_new_fragment(&mut state, "L1", 33, 1, mipoch(19));
+
+    assert_eq!(state.fragments_to_string(), "L1|32, L1|33");
+}

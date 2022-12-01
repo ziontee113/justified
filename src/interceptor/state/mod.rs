@@ -22,6 +22,14 @@ impl State {
         }
     }
 
+    pub fn fragments_to_string(&self) -> String {
+        self.fragments
+            .iter()
+            .map(ToString::to_string)
+            .collect::<Vec<String>>()
+            .join(", ")
+    }
+
     pub fn fragments(&self) -> &[IncomingFragment] {
         self.fragments.as_ref()
     }
