@@ -58,4 +58,12 @@ mod state_test {
 
         assert_eq!(state.fragments().len(), 0);
     }
+
+    #[test]
+    fn can_add_or_remove_fragment_base_on_incoming_fragment_value() {
+        let mut state = State::new();
+        let l1_32_down = IncomingFragment::new("L1", 32, 1, mipoch(0));
+
+        state.receive(&l1_32_down);
+    }
 }

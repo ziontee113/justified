@@ -1,3 +1,5 @@
+mod test;
+
 use super::incoming_fragment::IncomingFragment;
 
 pub struct State {
@@ -9,17 +11,23 @@ impl State {
         Self { fragments: vec![] }
     }
 
-    pub fn add_fragment(&mut self, fragment: IncomingFragment) {
-        self.fragments.push(fragment);
-    }
-
-    pub fn remove_fragment(&mut self, fragment: &IncomingFragment) {
-        self.fragments.retain(|f| {
-            !(f.code() == fragment.code() && f.device_alias() == fragment.device_alias())
-        });
+    pub fn receive(&self, fragment: &IncomingFragment) {
+        // TODO:
     }
 
     pub fn fragments(&self) -> &[IncomingFragment] {
         self.fragments.as_ref()
+    }
+}
+
+impl State {
+    fn add_fragment(&mut self, fragment: IncomingFragment) {
+        self.fragments.push(fragment);
+    }
+
+    fn remove_fragment(&mut self, fragment: &IncomingFragment) {
+        self.fragments.retain(|f| {
+            !(f.code() == fragment.code() && f.device_alias() == fragment.device_alias())
+        });
     }
 }
