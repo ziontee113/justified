@@ -6,7 +6,14 @@ mod test;
 #[macro_export]
 macro_rules! rule {
     ($($a:ident $b:expr), * => $output:expr) => {
-        $crate::rule_library::rule::Rule::new( vec![ $(ki!($a $b)),* ], $output )
+        $crate::rule_library::rule::Rule::new( vec![ $( $crate::ki!($a $b) ),* ], $output )
+    };
+}
+
+#[macro_export]
+macro_rules! rulekey {
+    ($($a:ident $b:expr), *) => {
+        vec![ $( $crate::ki!($a $b) ),* ]
     };
 }
 
