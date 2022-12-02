@@ -1,6 +1,13 @@
 #[cfg(test)]
 mod test;
 
+#[macro_export]
+macro_rules! ki {
+    ($a:ident $b:expr) => {
+        $crate::units::KeyIdentifier::new(stringify!($a), $b)
+    };
+}
+
 #[derive(Debug, Clone)]
 pub struct KeyIdentifier {
     device_alias: String,

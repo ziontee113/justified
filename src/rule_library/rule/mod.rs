@@ -4,12 +4,12 @@ use crate::units::KeyIdentifier;
 mod test;
 
 pub struct Rule {
-    input: KeyIdentifier,
+    input: Vec<KeyIdentifier>,
     output: u16,
 }
 
 impl Rule {
-    pub fn new(input: KeyIdentifier, output: u16) -> Self {
+    pub fn new(input: Vec<KeyIdentifier>, output: u16) -> Self {
         Self { input, output }
     }
 }
