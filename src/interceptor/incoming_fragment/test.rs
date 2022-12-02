@@ -3,8 +3,8 @@ use crate::{interceptor::incoming_fragment::IncomingFragment, utils::mipoch};
 #[test]
 fn can_make_new_fragment() {
     let fragment = IncomingFragment::new("L1", 32, 1, mipoch(0));
-    assert_eq!(fragment.key.device_alias, "L1");
-    assert_eq!(fragment.key.code, 32);
+    assert_eq!(fragment.key.device_alias(), "L1");
+    assert_eq!(fragment.key.code(), 32);
     assert_eq!(fragment.value(), 1);
     assert_eq!(fragment.timestamp(), mipoch(0));
 }
