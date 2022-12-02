@@ -128,14 +128,16 @@ fn can_return_fragments_as_vector_of_key_identifiers() {
 }
 
 #[test]
-fn state_can_save_latest_up_down_value() {
+fn state_can_save_latest_up_down_value_and_key() {
     let mut state = State::new();
 
     receive_new_fragment(&mut state, "L1", 32, 1, mipoch(0));
-    assert!(state.latest_down);
+    assert_eq!(state.latest_value, 1);
+    assert!(state.latest_key.is("L1", 32));
 
     receive_new_fragment(&mut state, "L1", 32, 0, mipoch(25));
-    assert!(!state.latest_down);
+    assert_eq!(state.latest_value, 0);
+    assert!(state.latest_key.is("L1", 32));
 }
 
 #[test]

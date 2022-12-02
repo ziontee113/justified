@@ -1,41 +1,44 @@
 #[cfg(test)]
 pub mod test;
 
-use crate::units::KeyIdentifier;
+use crate::{ki, units::KeyIdentifier};
 
 use super::incoming_fragment::IncomingFragment;
 
 pub struct State {
     fragments: Vec<IncomingFragment>,
-    latest_down: bool,
+    latest_value: i32,
+    latest_key: KeyIdentifier,
 }
 
 impl State {
     pub fn new() -> Self {
         Self {
             fragments: vec![],
-            latest_down: false,
+            latest_value: 0,
+            latest_key: ki!(__DEV_CLEAN 0),
         }
     }
 
     pub fn receive(&mut self, fragment: &IncomingFragment) {
         if fragment.value() == 0 {
             self.remove_fragment(fragment);
-            self.latest_down = false;
         }
 
         if fragment.value() == 1 {
             self.add_fragment(fragment.clone());
-            self.latest_down = true;
         }
+
+        self.latest_value = fragment.value();
+        self.latest_key = fragment.key().clone();
     }
 
     pub fn fragments(&self) -> &[IncomingFragment] {
         self.fragments.as_ref()
     }
 
-    pub fn latest_down(&self) -> bool {
-        self.latest_down
+    pub fn latest_value(&self) -> i32 {
+        self.latest_value
     }
 
     pub fn fragments_as_key_identifiers(&self) -> Vec<KeyIdentifier> {
