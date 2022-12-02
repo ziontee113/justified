@@ -30,3 +30,13 @@ impl RuleSet {
         &self.rules
     }
 }
+
+fn generate_prefix_from_input(input: &[KeyIdentifier]) -> Vec<KeyIdentifier> {
+    if input.len() > 1 {
+        return input[0..input.len() - 1]
+            .iter()
+            .map(std::clone::Clone::clone)
+            .collect();
+    }
+    input.to_vec()
+}

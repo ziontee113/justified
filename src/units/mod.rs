@@ -36,9 +36,3 @@ impl std::fmt::Display for KeyIdentifier {
         write!(f, "{}|{}", self.device_alias, self.code)
     }
 }
-
-// impl PartialEq for KeyIdentifier {
-//     fn eq(&self, other: &Self) -> bool {
-//         self.code == other.code && self.device_alias == other.device_alias
-//     }
-// }
