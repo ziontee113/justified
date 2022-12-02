@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod test;
+
 #[derive(Debug, Clone)]
 pub struct KeyIdentifier {
     device_alias: String,
@@ -5,8 +8,11 @@ pub struct KeyIdentifier {
 }
 
 impl KeyIdentifier {
-    pub fn new(device_alias: String, code: u16) -> Self {
-        Self { device_alias, code }
+    pub fn new(device_alias: &str, code: u16) -> Self {
+        Self {
+            device_alias: device_alias.to_string(),
+            code,
+        }
     }
 
     pub fn device_alias(&self) -> &str {
@@ -15,6 +21,12 @@ impl KeyIdentifier {
 
     pub fn code(&self) -> u16 {
         self.code
+    }
+}
+
+impl std::fmt::Display for KeyIdentifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}|{}", self.device_alias, self.code)
     }
 }
 

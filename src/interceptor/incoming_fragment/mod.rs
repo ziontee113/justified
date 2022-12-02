@@ -15,7 +15,7 @@ pub struct IncomingFragment {
 impl IncomingFragment {
     pub fn new(device_alias: &str, code: u16, value: i32, timestamp: SystemTime) -> Self {
         Self {
-            key: KeyIdentifier::new(device_alias.to_string(), code),
+            key: KeyIdentifier::new(device_alias, code),
             value,
             timestamp,
         }
@@ -42,6 +42,6 @@ impl IncomingFragment {
 
 impl Display for IncomingFragment {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}|{}", self.key.device_alias(), self.key.code())
+        write!(f, "{}", self.key)
     }
 }
