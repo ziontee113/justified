@@ -8,7 +8,7 @@ macro_rules! ki {
     };
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct KeyIdentifier {
     device_alias: String,
     code: u16,
@@ -37,8 +37,8 @@ impl std::fmt::Display for KeyIdentifier {
     }
 }
 
-impl PartialEq for KeyIdentifier {
-    fn eq(&self, other: &Self) -> bool {
-        self.code == other.code && self.device_alias == other.device_alias
-    }
-}
+// impl PartialEq for KeyIdentifier {
+//     fn eq(&self, other: &Self) -> bool {
+//         self.code == other.code && self.device_alias == other.device_alias
+//     }
+// }
