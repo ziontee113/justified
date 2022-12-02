@@ -1,7 +1,10 @@
 use std::time::SystemTime;
 
 use crate::{
-    interceptor::{incoming_fragment::IncomingFragment, state::State},
+    interceptor::{
+        incoming_fragment::IncomingFragment,
+        state::{LatestUpDown, State},
+    },
     rulekey,
     utils::mipoch,
 };
@@ -125,4 +128,51 @@ fn can_return_fragments_as_vector_of_key_identifiers() {
     assert_eq!(state.fragments_as_key_identifiers(), rulekey!(L1 33));
     receive_new_fragment(&mut state, "L1", 33, 0, mipoch(250));
     assert_eq!(state.fragments_as_key_identifiers(), rulekey!());
+}
+
+#[test]
+fn state_can_save_latest_up_down_value() {
+    let mut state = State::new();
+
+    receive_new_fragment(&mut state, "L1", 32, 1, mipoch(0));
+    assert_eq!(state.latest_up_down, LatestUpDown::Down);
+
+    receive_new_fragment(&mut state, "L1", 32, 0, mipoch(25));
+    assert_eq!(state.latest_up_down, LatestUpDown::Up);
+}
+
+#[test]
+fn can_get_state_potential_combo_prefix_single_key_case() {
+    let mut state = State::new();
+
+    receive_new_fragment(&mut state, "L1", 58, 1, mipoch(0));
+    assert_eq!(state.prefix().len(), 1);
+    assert_eq!(state.prefix().get(0).unwrap().device_alias(), "L1");
+    assert_eq!(state.prefix().get(0).unwrap().code(), 58);
+
+    receive_new_fragment(&mut state, "L1", 58, 0, mipoch(0));
+    assert_eq!(state.prefix().len(), 0);
+}
+
+#[test]
+fn can_get_state_potential_combo_prefix_combo_case() {
+    let mut state = State::new();
+
+    receive_new_fragment(&mut state, "L1", 58, 1, mipoch(100));
+    assert_eq!(state.prefix().len(), 1);
+    assert_eq!(state.prefix().get(0).unwrap().device_alias(), "L1");
+    assert_eq!(state.prefix().get(0).unwrap().code(), 58);
+
+    receive_new_fragment(&mut state, "R1", 36, 1, mipoch(150));
+    assert_eq!(state.prefix().len(), 1);
+    assert_eq!(state.prefix().get(0).unwrap().device_alias(), "L1");
+    assert_eq!(state.prefix().get(0).unwrap().code(), 58);
+
+    receive_new_fragment(&mut state, "R1", 36, 0, mipoch(200));
+    assert_eq!(state.prefix().len(), 1);
+    assert_eq!(state.prefix().get(0).unwrap().device_alias(), "L1");
+    assert_eq!(state.prefix().get(0).unwrap().code(), 58);
+
+    receive_new_fragment(&mut state, "L1", 58, 0, mipoch(250));
+    assert_eq!(state.prefix().len(), 0);
 }
