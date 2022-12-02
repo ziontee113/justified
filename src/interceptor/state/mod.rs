@@ -1,5 +1,7 @@
 #[cfg(test)]
-mod test;
+pub mod test;
+
+use crate::units::KeyIdentifier;
 
 use super::incoming_fragment::IncomingFragment;
 
@@ -24,6 +26,10 @@ impl State {
 
     pub fn fragments(&self) -> &[IncomingFragment] {
         self.fragments.as_ref()
+    }
+
+    pub fn fragments_as_key_identifiers(&self) -> Vec<KeyIdentifier> {
+        self.fragments().iter().map(|f| f.key().clone()).collect()
     }
 }
 

@@ -2,6 +2,7 @@ use std::time::SystemTime;
 
 use crate::{
     interceptor::{incoming_fragment::IncomingFragment, state::State},
+    rulekey,
     utils::mipoch,
 };
 
@@ -57,7 +58,7 @@ fn can_remove_fragment_base_on_alias_and_code() {
     assert_eq!(state.fragments().len(), 0);
 }
 
-fn receive_new_fragment(
+pub fn receive_new_fragment(
     state: &mut State,
     device_alias: &str,
     code: u16,
@@ -103,4 +104,25 @@ fn can_display_state_as_string() {
 
     state.remove_fragment(&IncomingFragment::new("L1", 33, 0, mipoch(53)));
     assert_eq!(state.to_string(), "");
+}
+
+#[test]
+fn can_return_fragments_as_vector_of_key_identifiers() {
+    let mut state = State::new();
+
+    receive_new_fragment(&mut state, "L1", 32, 1, mipoch(0));
+    assert_eq!(state.fragments_as_key_identifiers(), rulekey!(L1 32));
+
+    receive_new_fragment(&mut state, "L1", 32, 0, mipoch(25));
+    assert_eq!(state.fragments_as_key_identifiers(), rulekey!());
+
+    receive_new_fragment(&mut state, "L1", 33, 1, mipoch(100));
+    assert_eq!(state.fragments_as_key_identifiers(), rulekey!(L1 33));
+    receive_new_fragment(&mut state, "L1", 32, 1, mipoch(150));
+    assert_eq!(state.fragments_as_key_identifiers(), rulekey!(L1 33, L1 32));
+
+    receive_new_fragment(&mut state, "L1", 32, 0, mipoch(200));
+    assert_eq!(state.fragments_as_key_identifiers(), rulekey!(L1 33));
+    receive_new_fragment(&mut state, "L1", 33, 0, mipoch(250));
+    assert_eq!(state.fragments_as_key_identifiers(), rulekey!());
 }
