@@ -29,6 +29,10 @@ impl KeyIdentifier {
     pub fn code(&self) -> u16 {
         self.code
     }
+
+    pub fn is(&self, device_alias: &str, code: u16) -> bool {
+        self.device_alias == device_alias && self.code == code
+    }
 }
 
 impl std::fmt::Display for KeyIdentifier {
