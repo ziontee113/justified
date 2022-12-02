@@ -15,7 +15,7 @@ impl State {
     pub fn new() -> Self {
         Self {
             fragments: vec![],
-            latest_value: 0,
+            latest_value: -1,
             latest_key: ki!(__DEV_CLEAN 0),
         }
     }
@@ -39,6 +39,10 @@ impl State {
 
     pub fn latest_value(&self) -> i32 {
         self.latest_value
+    }
+
+    pub fn latest_key(&self) -> KeyIdentifier {
+        self.latest_key.clone()
     }
 
     pub fn fragments_as_key_identifiers(&self) -> Vec<KeyIdentifier> {
