@@ -89,18 +89,18 @@ fn can_add_or_remove_fragment_base_on_incoming_fragment_value() {
 }
 
 #[test]
-fn can_turn_fragments_vec_to_string() {
+fn can_display_state_as_string() {
     let mut state = State::new();
 
     receive_new_fragment(&mut state, "L1", 32, 1, mipoch(0));
-    assert_eq!(state.fragments_to_string(), "L1|32");
+    assert_eq!(state.to_string(), "L1|32");
 
     receive_new_fragment(&mut state, "L1", 33, 1, mipoch(19));
-    assert_eq!(state.fragments_to_string(), "L1|32, L1|33");
+    assert_eq!(state.to_string(), "L1|32, L1|33");
 
     state.remove_fragment(&IncomingFragment::new("L1", 32, 0, mipoch(40)));
-    assert_eq!(state.fragments_to_string(), "L1|33");
+    assert_eq!(state.to_string(), "L1|33");
 
     state.remove_fragment(&IncomingFragment::new("L1", 33, 0, mipoch(53)));
-    assert_eq!(state.fragments_to_string(), "");
+    assert_eq!(state.to_string(), "");
 }
