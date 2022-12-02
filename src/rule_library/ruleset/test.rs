@@ -51,11 +51,12 @@ fn can_generate_prefix_hash_set_when_creating_ruleset() {
             rule!(L1 29, R1 36 => 116),
             rule!(L1 29, R1 36, R1 37 => 1),
             rule!(L1 29, R1 37 => 115),
+            rule!(L1 29, R1 37, R1 36 => 1),
         ],
     );
     let prefixes = ruleset.prefixes();
     assert_eq!(prefixes.len(), 3);
-    assert!(prefixes.contains(&rulekey!(L1 58)));
     assert!(prefixes.contains(&rulekey!(L1 29)));
     assert!(prefixes.contains(&rulekey!(L1 29, R1 36)));
+    assert!(prefixes.contains(&rulekey!(L1 29, R1 37)));
 }

@@ -20,7 +20,9 @@ impl RuleSet {
 
         for rule in rules {
             map.insert(rule.input().into(), rule.output());
-            prefixes.insert(generate_prefix_from_input(rule.input()));
+            if rule.input().len() > 1 {
+                prefixes.insert(generate_prefix_from_input(rule.input()));
+            }
         }
 
         Self {
