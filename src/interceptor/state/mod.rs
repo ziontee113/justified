@@ -5,34 +5,28 @@ use crate::units::KeyIdentifier;
 
 use super::incoming_fragment::IncomingFragment;
 
-#[derive(Debug, PartialEq, Eq)]
-pub enum LatestUpDown {
-    Down,
-    Up,
-}
-
 pub struct State {
     fragments: Vec<IncomingFragment>,
-    latest_up_down: LatestUpDown,
+    latest_down: bool,
 }
 
 impl State {
     pub fn new() -> Self {
         Self {
             fragments: vec![],
-            latest_up_down: LatestUpDown::Up,
+            latest_down: false,
         }
     }
 
     pub fn receive(&mut self, fragment: &IncomingFragment) {
         if fragment.value() == 0 {
             self.remove_fragment(fragment);
-            self.latest_up_down = LatestUpDown::Up;
+            self.latest_down = false;
         }
 
         if fragment.value() == 1 {
             self.add_fragment(fragment.clone());
-            self.latest_up_down = LatestUpDown::Down;
+            self.latest_down = true;
         }
     }
 
@@ -40,8 +34,8 @@ impl State {
         self.fragments.as_ref()
     }
 
-    pub fn latest_up_down(&self) -> &LatestUpDown {
-        &self.latest_up_down
+    pub fn latest_down(&self) -> bool {
+        self.latest_down
     }
 
     pub fn fragments_as_key_identifiers(&self) -> Vec<KeyIdentifier> {

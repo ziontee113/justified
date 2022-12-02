@@ -28,20 +28,16 @@ fn can_generate_key_prefix_from_rule_input() {
     let rule = rule!(L1 58 => 1);
     let prefix = generate_prefix_from_input(rule.input());
     assert_eq!(prefix.len(), 1);
-    assert_eq!(prefix.get(0).unwrap().device_alias(), "L1");
-    assert_eq!(prefix.get(0).unwrap().code(), 58);
+    assert!(prefix.get(0).unwrap().is("L1", 58));
 
     let rule = rule!(L1 58, R1 44 => 1);
     let prefix = generate_prefix_from_input(rule.input());
     assert_eq!(prefix.len(), 1);
-    assert_eq!(prefix.get(0).unwrap().device_alias(), "L1");
-    assert_eq!(prefix.get(0).unwrap().code(), 58);
+    assert!(prefix.get(0).unwrap().is("L1", 58));
 
     let rule = rule!(L1 58, R1 44, R2 55 => 1);
     let prefix = generate_prefix_from_input(rule.input());
     assert_eq!(prefix.len(), 2);
-    assert_eq!(prefix.get(0).unwrap().device_alias(), "L1");
-    assert_eq!(prefix.get(0).unwrap().code(), 58);
-    assert_eq!(prefix.get(1).unwrap().device_alias(), "R1");
-    assert_eq!(prefix.get(1).unwrap().code(), 44);
+    assert!(prefix.get(0).unwrap().is("L1", 58));
+    assert!(prefix.get(1).unwrap().is("R1", 44));
 }
