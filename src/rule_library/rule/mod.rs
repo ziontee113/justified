@@ -19,4 +19,12 @@ impl Rule {
     pub fn new(input: Vec<KeyIdentifier>, output: u16) -> Self {
         Self { input, output }
     }
+
+    pub fn input(&self) -> &[KeyIdentifier] {
+        self.input.as_ref()
+    }
+
+    pub fn output(&self) -> u16 {
+        self.output
+    }
 }
