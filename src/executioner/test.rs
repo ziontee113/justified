@@ -22,7 +22,7 @@ fn mock_ruleset() -> RuleSet {
 }
 
 #[test]
-fn non_combo_single_key_down_and_single_key_up() {
+fn non_prefix_key_down_and_up() {
     let ruleset = mock_ruleset();
     let mut state = State::new();
 
@@ -34,7 +34,7 @@ fn non_combo_single_key_down_and_single_key_up() {
 }
 
 #[test]
-fn non_combo_single_keydown_and_key_up_after_another() {
+fn consecutive_non_prefix_key_down_and_up() {
     let ruleset = mock_ruleset();
 
     let mut state = State::new();
@@ -49,7 +49,7 @@ fn non_combo_single_keydown_and_key_up_after_another() {
 }
 
 #[test]
-fn combo_single_key_down_and_single_key_up() {
+fn prefixed_key_down_and_up() {
     let ruleset = mock_ruleset();
     let mut state = State::new();
 
