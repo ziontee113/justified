@@ -11,6 +11,7 @@ macro_rules! rule {
 }
 
 #[macro_export]
+/// Creates a vector of `KeyIdentifiers` from arguments
 macro_rules! rulekey {
     ($($a:ident $b:expr), *) => {
         vec![ $( $crate::ki!($a $b) ),* ]

@@ -25,4 +25,8 @@ impl RuleSet {
             rules: map,
         }
     }
+
+    pub fn rules(&self) -> &HashMap<Vec<KeyIdentifier>, u16> {
+        &self.rules
+    }
 }
