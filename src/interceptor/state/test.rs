@@ -29,7 +29,7 @@ fn can_add_fragment_to_state() {
 
     state.add_fragment(fragment);
     fragment_has_contents(
-        state.fragments().get(0).unwrap(),
+        state.sequence().get(0).unwrap(),
         "L1",
         32,
         KeyState::Down,
@@ -51,16 +51,16 @@ fn can_remove_fragment_base_on_alias_and_code() {
     let l1_32_up = IncomingFragment::new("L1", 32, 0, mipoch(40));
     state.remove_fragment(&l1_32_up);
 
-    assert_eq!(state.fragments().len(), 2);
+    assert_eq!(state.sequence().len(), 2);
     fragment_has_contents(
-        state.fragments().get(0).unwrap(),
+        state.sequence().get(0).unwrap(),
         "L1",
         33,
         KeyState::Down,
         mipoch(10),
     );
     fragment_has_contents(
-        state.fragments().get(1).unwrap(),
+        state.sequence().get(1).unwrap(),
         "L1",
         34,
         KeyState::Down,
@@ -70,9 +70,9 @@ fn can_remove_fragment_base_on_alias_and_code() {
     let l1_33_up = IncomingFragment::new("L1", 33, 0, mipoch(50));
     state.remove_fragment(&l1_33_up);
 
-    assert_eq!(state.fragments().len(), 1);
+    assert_eq!(state.sequence().len(), 1);
     fragment_has_contents(
-        state.fragments().get(0).unwrap(),
+        state.sequence().get(0).unwrap(),
         "L1",
         34,
         KeyState::Down,
@@ -82,7 +82,7 @@ fn can_remove_fragment_base_on_alias_and_code() {
     let l1_34_up = IncomingFragment::new("L1", 34, 0, mipoch(60));
     state.remove_fragment(&l1_34_up);
 
-    assert_eq!(state.fragments().len(), 0);
+    assert_eq!(state.sequence().len(), 0);
 }
 
 pub fn receive_new_fragment(
@@ -101,9 +101,9 @@ fn can_add_or_remove_fragment_base_on_incoming_fragment_value() {
     let mut state = State::new();
 
     receive_new_fragment(&mut state, "L1", 32, 1, mipoch(0));
-    assert_eq!(state.fragments().len(), 1);
+    assert_eq!(state.sequence().len(), 1);
     fragment_has_contents(
-        state.fragments().get(0).unwrap(),
+        state.sequence().get(0).unwrap(),
         "L1",
         32,
         KeyState::Down,
@@ -111,9 +111,9 @@ fn can_add_or_remove_fragment_base_on_incoming_fragment_value() {
     );
 
     receive_new_fragment(&mut state, "L1", 33, 1, mipoch(10));
-    assert_eq!(state.fragments().len(), 2);
+    assert_eq!(state.sequence().len(), 2);
     fragment_has_contents(
-        state.fragments().get(1).unwrap(),
+        state.sequence().get(1).unwrap(),
         "L1",
         33,
         KeyState::Down,
@@ -121,9 +121,9 @@ fn can_add_or_remove_fragment_base_on_incoming_fragment_value() {
     );
 
     receive_new_fragment(&mut state, "L1", 33, 0, mipoch(40));
-    assert_eq!(state.fragments().len(), 1);
+    assert_eq!(state.sequence().len(), 1);
     fragment_has_contents(
-        state.fragments().get(0).unwrap(),
+        state.sequence().get(0).unwrap(),
         "L1",
         32,
         KeyState::Down,
@@ -131,7 +131,7 @@ fn can_add_or_remove_fragment_base_on_incoming_fragment_value() {
     );
 
     receive_new_fragment(&mut state, "L1", 32, 0, mipoch(58));
-    assert_eq!(state.fragments().len(), 0);
+    assert_eq!(state.sequence().len(), 0);
 }
 
 #[test]
@@ -156,20 +156,20 @@ fn can_return_fragments_as_vector_of_key_identifiers() {
     let mut state = State::new();
 
     receive_new_fragment(&mut state, "L1", 32, 1, mipoch(0));
-    assert_eq!(state.fragment_identifiers(), rulekey!(L1 32));
+    assert_eq!(state.sequence_identifiers(), rulekey!(L1 32));
 
     receive_new_fragment(&mut state, "L1", 32, 0, mipoch(25));
-    assert_eq!(state.fragment_identifiers(), rulekey!());
+    assert_eq!(state.sequence_identifiers(), rulekey!());
 
     receive_new_fragment(&mut state, "L1", 33, 1, mipoch(100));
-    assert_eq!(state.fragment_identifiers(), rulekey!(L1 33));
+    assert_eq!(state.sequence_identifiers(), rulekey!(L1 33));
     receive_new_fragment(&mut state, "L1", 32, 1, mipoch(150));
-    assert_eq!(state.fragment_identifiers(), rulekey!(L1 33, L1 32));
+    assert_eq!(state.sequence_identifiers(), rulekey!(L1 33, L1 32));
 
     receive_new_fragment(&mut state, "L1", 32, 0, mipoch(200));
-    assert_eq!(state.fragment_identifiers(), rulekey!(L1 33));
+    assert_eq!(state.sequence_identifiers(), rulekey!(L1 33));
     receive_new_fragment(&mut state, "L1", 33, 0, mipoch(250));
-    assert_eq!(state.fragment_identifiers(), rulekey!());
+    assert_eq!(state.sequence_identifiers(), rulekey!());
 }
 
 #[test]
@@ -225,10 +225,10 @@ fn can_get_identifiers_before_key_up_event() {
     receive_new_fragment(&mut state, "R1", 36, 1, mipoch(150));
 
     receive_new_fragment(&mut state, "R1", 36, 0, mipoch(200));
-    assert_eq!(state.identifiers_before_up_event().len(), 2);
+    assert_eq!(state.sequence_identifiers_before_key_up_event().len(), 2);
 
     receive_new_fragment(&mut state, "L1", 58, 0, mipoch(250));
-    assert_eq!(state.identifiers_before_up_event().len(), 1);
+    assert_eq!(state.sequence_identifiers_before_key_up_event().len(), 1);
 }
 
 #[test]

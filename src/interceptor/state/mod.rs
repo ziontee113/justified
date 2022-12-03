@@ -6,7 +6,7 @@ use crate::{ki, units::KeyIdentifier};
 use super::incoming_fragment::{IncomingFragment, KeyState};
 
 pub struct State {
-    fragments: Vec<IncomingFragment>,
+    sequence: Vec<IncomingFragment>,
 
     latest_value: KeyState,
     latest_key: KeyIdentifier,
@@ -22,7 +22,7 @@ pub struct State {
 impl State {
     pub fn new() -> Self {
         Self {
-            fragments: vec![],
+            sequence: vec![],
 
             latest_value: KeyState::Uninitiated,
             latest_key: ki!(__HACK_FRAUD_KEYBOARD_ALIAS__PLZ_COME_UP_WITH_BETTER_SOLUTION__ 0),
@@ -38,7 +38,7 @@ impl State {
 
     pub fn receive(&mut self, fragment: &IncomingFragment) {
         if fragment.value() == KeyState::Up {
-            self.identifiers_before_key_up_event = self.fragment_identifiers();
+            self.identifiers_before_key_up_event = self.sequence_identifiers();
             self.remove_fragment(fragment);
 
             self.key_up_counter += 1;
@@ -58,8 +58,8 @@ impl State {
         self.latest_key = fragment.key().clone();
     }
 
-    pub fn fragments(&self) -> &[IncomingFragment] {
-        self.fragments.as_ref()
+    pub fn sequence(&self) -> &[IncomingFragment] {
+        self.sequence.as_ref()
     }
 
     pub fn latest_value(&self) -> KeyState {
@@ -70,7 +70,7 @@ impl State {
         self.latest_key.clone()
     }
 
-    pub fn identifiers_before_up_event(&self) -> &[KeyIdentifier] {
+    pub fn sequence_identifiers_before_key_up_event(&self) -> &[KeyIdentifier] {
         self.identifiers_before_key_up_event.as_ref()
     }
 
@@ -78,30 +78,29 @@ impl State {
         self.key_down_combo_count
     }
 
-    pub fn fragment_identifiers(&self) -> Vec<KeyIdentifier> {
-        self.fragments().iter().map(|f| f.key().clone()).collect()
+    pub fn sequence_identifiers(&self) -> Vec<KeyIdentifier> {
+        self.sequence().iter().map(|f| f.key().clone()).collect()
     }
 
     pub fn modifier_identifiers(&self) -> Vec<KeyIdentifier> {
-        if self.fragments.len() > 1 {
-            return self.fragments[0..self.fragments.len() - 1]
+        if self.sequence.len() > 1 {
+            return self.sequence[0..self.sequence.len() - 1]
                 .iter()
                 .map(|f| f.key().clone())
                 .collect::<Vec<KeyIdentifier>>();
         }
 
-        self.fragment_identifiers()
+        self.sequence_identifiers()
     }
 }
 
 impl State {
     fn add_fragment(&mut self, fragment: IncomingFragment) {
-        self.fragments.push(fragment);
+        self.sequence.push(fragment);
     }
 
     fn remove_fragment(&mut self, incoming_fragment: &IncomingFragment) {
-        self.fragments
-            .retain(|f| !f.has_same_key(incoming_fragment));
+        self.sequence.retain(|f| !f.has_same_key(incoming_fragment));
     }
 }
 
@@ -110,7 +109,7 @@ impl std::fmt::Display for State {
         write!(
             f,
             "{}",
-            self.fragments
+            self.sequence
                 .iter()
                 .map(ToString::to_string)
                 .collect::<Vec<String>>()

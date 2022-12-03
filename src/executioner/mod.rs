@@ -17,30 +17,30 @@ fn ruleset_output_to_execute(state: &mut State, ruleset: &RuleSet) -> Option<u16
 }
 
 fn handle_keystate_down(state: &mut State, ruleset: &RuleSet) -> Option<u16> {
-    if state.fragments().len() == 1
-        && !ruleset.prefixes().contains(&state.fragment_identifiers())
-        && !ruleset.rules().contains_key(&state.fragment_identifiers())
+    if state.sequence().len() == 1
+        && !ruleset.prefixes().contains(&state.sequence_identifiers())
+        && !ruleset.rules().contains_key(&state.sequence_identifiers())
     {
-        return Some(state.fragments().get(0).unwrap().key().code());
+        return Some(state.sequence().get(0).unwrap().key().code());
     }
 
     if state.latest_value() == KeyState::Down
-        && ruleset.prefixes().contains(&state.fragment_identifiers())
+        && ruleset.prefixes().contains(&state.sequence_identifiers())
     {
         return None;
     }
 
     if ruleset.prefixes().contains(&state.modifier_identifiers())
-        && state.modifier_identifiers() == state.fragment_identifiers()
+        && state.modifier_identifiers() == state.sequence_identifiers()
     {
         return None;
     }
 
-    return ruleset.rules().get(&state.fragment_identifiers()).copied();
+    return ruleset.rules().get(&state.sequence_identifiers()).copied();
 }
 
 fn handle_keystate_up(state: &mut State, ruleset: &RuleSet) -> Option<u16> {
-    let before_up = state.identifiers_before_up_event();
+    let before_up = state.sequence_identifiers_before_key_up_event();
 
     if before_up.len() == state.key_down_combo_count().into()
         && ruleset.prefixes().contains(before_up)
