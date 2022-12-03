@@ -7,26 +7,37 @@ use super::incoming_fragment::IncomingFragment;
 
 pub struct State {
     fragments: Vec<IncomingFragment>,
+
     latest_value: i32,
     latest_key: KeyIdentifier,
+
+    identifiers_before_key_up_event: Vec<KeyIdentifier>,
+    key_up_combo_count: u16,
 }
 
 impl State {
     pub fn new() -> Self {
         Self {
             fragments: vec![],
+
             latest_value: -1,
             latest_key: ki!(__DEV_CLEAN 0),
+
+            identifiers_before_key_up_event: vec![],
+            key_up_combo_count: 0,
         }
     }
 
     pub fn receive(&mut self, fragment: &IncomingFragment) {
         if fragment.value() == 0 {
+            self.identifiers_before_key_up_event = self.fragment_identifiers();
             self.remove_fragment(fragment);
+            self.key_up_combo_count += 1;
         }
 
         if fragment.value() == 1 {
             self.add_fragment(fragment.clone());
+            self.key_up_combo_count = 0;
         }
 
         self.latest_value = fragment.value();
@@ -41,15 +52,23 @@ impl State {
         self.latest_value
     }
 
-    pub fn latest_key(&self) -> KeyIdentifier {
+    pub fn latest_key_identifier(&self) -> KeyIdentifier {
         self.latest_key.clone()
     }
 
-    pub fn fragments_as_key_identifiers(&self) -> Vec<KeyIdentifier> {
+    pub fn identifiers_before_up_event(&self) -> &[KeyIdentifier] {
+        self.identifiers_before_key_up_event.as_ref()
+    }
+
+    pub fn key_up_combo_count(&self) -> u16 {
+        self.key_up_combo_count
+    }
+
+    pub fn fragment_identifiers(&self) -> Vec<KeyIdentifier> {
         self.fragments().iter().map(|f| f.key().clone()).collect()
     }
 
-    pub fn prefix(&self) -> Vec<KeyIdentifier> {
+    pub fn prefix_identifiers(&self) -> Vec<KeyIdentifier> {
         if self.fragments.len() > 1 {
             return self.fragments[0..self.fragments.len() - 1]
                 .iter()
@@ -57,7 +76,7 @@ impl State {
                 .collect::<Vec<KeyIdentifier>>();
         }
 
-        self.fragments_as_key_identifiers()
+        self.fragment_identifiers()
     }
 }
 

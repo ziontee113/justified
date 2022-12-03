@@ -111,20 +111,20 @@ fn can_return_fragments_as_vector_of_key_identifiers() {
     let mut state = State::new();
 
     receive_new_fragment(&mut state, "L1", 32, 1, mipoch(0));
-    assert_eq!(state.fragments_as_key_identifiers(), rulekey!(L1 32));
+    assert_eq!(state.fragment_identifiers(), rulekey!(L1 32));
 
     receive_new_fragment(&mut state, "L1", 32, 0, mipoch(25));
-    assert_eq!(state.fragments_as_key_identifiers(), rulekey!());
+    assert_eq!(state.fragment_identifiers(), rulekey!());
 
     receive_new_fragment(&mut state, "L1", 33, 1, mipoch(100));
-    assert_eq!(state.fragments_as_key_identifiers(), rulekey!(L1 33));
+    assert_eq!(state.fragment_identifiers(), rulekey!(L1 33));
     receive_new_fragment(&mut state, "L1", 32, 1, mipoch(150));
-    assert_eq!(state.fragments_as_key_identifiers(), rulekey!(L1 33, L1 32));
+    assert_eq!(state.fragment_identifiers(), rulekey!(L1 33, L1 32));
 
     receive_new_fragment(&mut state, "L1", 32, 0, mipoch(200));
-    assert_eq!(state.fragments_as_key_identifiers(), rulekey!(L1 33));
+    assert_eq!(state.fragment_identifiers(), rulekey!(L1 33));
     receive_new_fragment(&mut state, "L1", 33, 0, mipoch(250));
-    assert_eq!(state.fragments_as_key_identifiers(), rulekey!());
+    assert_eq!(state.fragment_identifiers(), rulekey!());
 }
 
 #[test]
@@ -145,11 +145,11 @@ fn can_get_state_prefix_single_key_case() {
     let mut state = State::new();
 
     receive_new_fragment(&mut state, "L1", 58, 1, mipoch(0));
-    assert_eq!(state.prefix().len(), 1);
-    assert!(state.prefix().get(0).unwrap().is("L1", 58));
+    assert_eq!(state.prefix_identifiers().len(), 1);
+    assert!(state.prefix_identifiers().get(0).unwrap().is("L1", 58));
 
     receive_new_fragment(&mut state, "L1", 58, 0, mipoch(0));
-    assert_eq!(state.prefix().len(), 0);
+    assert_eq!(state.prefix_identifiers().len(), 0);
 }
 
 #[test]
@@ -157,17 +157,54 @@ fn can_get_state_prefix_combo_case() {
     let mut state = State::new();
 
     receive_new_fragment(&mut state, "L1", 58, 1, mipoch(100));
-    assert_eq!(state.prefix().len(), 1);
-    assert!(state.prefix().get(0).unwrap().is("L1", 58));
+    assert_eq!(state.prefix_identifiers().len(), 1);
+    assert!(state.prefix_identifiers().get(0).unwrap().is("L1", 58));
 
     receive_new_fragment(&mut state, "R1", 36, 1, mipoch(150));
-    assert_eq!(state.prefix().len(), 1);
-    assert!(state.prefix().get(0).unwrap().is("L1", 58));
+    assert_eq!(state.prefix_identifiers().len(), 1);
+    assert!(state.prefix_identifiers().get(0).unwrap().is("L1", 58));
 
     receive_new_fragment(&mut state, "R1", 36, 0, mipoch(200));
-    assert_eq!(state.prefix().len(), 1);
-    assert!(state.prefix().get(0).unwrap().is("L1", 58));
+    assert_eq!(state.prefix_identifiers().len(), 1);
+    assert!(state.prefix_identifiers().get(0).unwrap().is("L1", 58));
 
     receive_new_fragment(&mut state, "L1", 58, 0, mipoch(250));
-    assert_eq!(state.prefix().len(), 0);
+    assert_eq!(state.prefix_identifiers().len(), 0);
+}
+
+#[test]
+fn can_get_identifiers_before_key_up_event() {
+    let mut state = State::new();
+
+    receive_new_fragment(&mut state, "L1", 58, 1, mipoch(100));
+    receive_new_fragment(&mut state, "R1", 36, 1, mipoch(150));
+
+    receive_new_fragment(&mut state, "R1", 36, 0, mipoch(200));
+    assert_eq!(state.identifiers_before_up_event().len(), 2);
+
+    receive_new_fragment(&mut state, "L1", 58, 0, mipoch(250));
+    assert_eq!(state.identifiers_before_up_event().len(), 1);
+}
+
+#[test]
+fn can_update_key_up_combo_count() {
+    let mut state = State::new();
+
+    receive_new_fragment(&mut state, "L1", 58, 1, mipoch(100));
+    assert_eq!(state.key_up_combo_count(), 0);
+
+    receive_new_fragment(&mut state, "R1", 36, 1, mipoch(150));
+    assert_eq!(state.key_up_combo_count(), 0);
+
+    receive_new_fragment(&mut state, "R1", 37, 1, mipoch(180));
+    assert_eq!(state.key_up_combo_count(), 0);
+
+    receive_new_fragment(&mut state, "R1", 37, 0, mipoch(200));
+    assert_eq!(state.key_up_combo_count(), 1);
+
+    receive_new_fragment(&mut state, "R1", 36, 0, mipoch(220));
+    assert_eq!(state.key_up_combo_count(), 2);
+
+    receive_new_fragment(&mut state, "L1", 58, 0, mipoch(250));
+    assert_eq!(state.key_up_combo_count(), 3);
 }

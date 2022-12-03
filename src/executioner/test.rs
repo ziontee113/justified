@@ -15,8 +15,8 @@ fn mock_ruleset() -> RuleSet {
             rule!(L1 58 => 1),          // map Capslock to Esc: combo-prefix
             rule!(L1 58, R1 36 => 108), // Capslock + J to Down: combo
             rule!(L1 58, R1 37 => 103), // Capslock + K to Up: combo
-            rule!(L1 29, R1 36 => 116),
-            rule!(L1 29, R1 37 => 115),
+            rule!(L1 29, R1 36 => 116), // Ctrl + J to VolumeDown
+            rule!(L1 29, R1 37 => 115), // Ctrl + K to VolumeUp
         ],
     )
 }
@@ -58,4 +58,22 @@ fn prefixed_key_down_and_up() {
 
     receive_new_fragment(&mut state, "L1", 58, 0, mipoch(40));
     assert_eq!(ruleset_output_to_execute(&state, &ruleset), Some(1));
+}
+
+#[test]
+fn basic_combo() {
+    let ruleset = mock_ruleset();
+    let mut state = State::new();
+
+    receive_new_fragment(&mut state, "L1", 58, 1, mipoch(0));
+    assert_eq!(ruleset_output_to_execute(&state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 36, 1, mipoch(40));
+    assert_eq!(ruleset_output_to_execute(&state, &ruleset), Some(108));
+
+    receive_new_fragment(&mut state, "R1", 36, 0, mipoch(80));
+    assert_eq!(ruleset_output_to_execute(&state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "L1", 58, 0, mipoch(120));
+    assert_eq!(ruleset_output_to_execute(&state, &ruleset), None);
 }
