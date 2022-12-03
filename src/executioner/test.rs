@@ -267,3 +267,57 @@ fn should_return_same_key_if_key_not_mapped() {
     receive_new_fragment(&mut state, "L1", 88, 0, mipoch(100));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
 }
+
+// ------------------------------------------------------------- Key Hold Events
+
+#[test]
+fn should_repeat_same_key_if_not_mapped_on_keyhold_event() {
+    let ruleset = mock_ruleset();
+    let mut state = State::new();
+
+    // code 87 : F11 key : not mapped
+
+    receive_new_fragment(&mut state, "L1", 87, 1, mipoch(0));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(87));
+
+    receive_new_fragment(&mut state, "L1", 87, 2, mipoch(50));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(87));
+
+    receive_new_fragment(&mut state, "L1", 87, 2, mipoch(100));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(87));
+
+    receive_new_fragment(&mut state, "L1", 87, 2, mipoch(150));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(87));
+
+    receive_new_fragment(&mut state, "L1", 87, 0, mipoch(200));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+}
+
+#[test]
+fn should_repeat_basic_combo_on_key_hold_event() {
+    let ruleset = mock_ruleset();
+    let mut state = State::new();
+
+    // rule!(L1 58, R1 36 => 108) : non-modifier : Capslock + J to Down
+
+    receive_new_fragment(&mut state, "L1", 58, 1, mipoch(0));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 36, 1, mipoch(40));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(108));
+
+    receive_new_fragment(&mut state, "R1", 36, 2, mipoch(90));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(108));
+
+    receive_new_fragment(&mut state, "R1", 36, 2, mipoch(140));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(108));
+
+    receive_new_fragment(&mut state, "R1", 36, 2, mipoch(190));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(108));
+
+    receive_new_fragment(&mut state, "R1", 36, 0, mipoch(250));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "L1", 58, 0, mipoch(300));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+}

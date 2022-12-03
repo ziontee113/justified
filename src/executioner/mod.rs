@@ -7,8 +7,8 @@ use crate::{
 mod test;
 
 fn ruleset_output_to_execute(state: &mut State, ruleset: &RuleSet) -> Option<u16> {
-    if state.latest_value() == KeyState::Down {
-        return handle_keystate_down(state, ruleset);
+    if state.latest_value() == KeyState::Down || state.latest_value() == KeyState::Hold {
+        return handle_keystate_down_or_hold(state, ruleset);
     }
     if state.latest_value() == KeyState::Up {
         return handle_keystate_up(state, ruleset);
@@ -16,7 +16,7 @@ fn ruleset_output_to_execute(state: &mut State, ruleset: &RuleSet) -> Option<u16
     None
 }
 
-fn handle_keystate_down(state: &mut State, ruleset: &RuleSet) -> Option<u16> {
+fn handle_keystate_down_or_hold(state: &mut State, ruleset: &RuleSet) -> Option<u16> {
     if state.sequence().len() == 1
         && !ruleset.prefixes().contains(&state.sequence_identifiers())
         && !ruleset.rules().contains_key(&state.sequence_identifiers())
