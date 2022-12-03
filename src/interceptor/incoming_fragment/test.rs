@@ -3,7 +3,6 @@ use crate::{
     utils::mipoch,
 };
 
-// TODO: should use doc test instead
 #[test]
 fn can_make_new_fragment() {
     let fragment = IncomingFragment::new("L1", 32, 1, mipoch(0));

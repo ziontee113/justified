@@ -60,7 +60,7 @@ impl IncomingFragment {
 
 impl IncomingFragment {
     pub fn value(&self) -> KeyState {
-        self.value.clone()
+        self.value
     }
 
     pub fn timestamp(&self) -> SystemTime {

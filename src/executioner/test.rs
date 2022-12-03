@@ -91,6 +91,33 @@ fn basic_combo() {
 }
 
 #[test]
+fn consecutive_basic_combos() {
+    let ruleset = mock_ruleset();
+    let mut state = State::new();
+
+    // rule!(L1 58, R1 36 => 108) : non-modifier : Capslock + J to Down
+    // rule!(L1 58, R1 37 => 103) : non-modifier : Capslock + K to Up
+
+    receive_new_fragment(&mut state, "L1", 58, 1, mipoch(0));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 36, 1, mipoch(40));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(108));
+
+    receive_new_fragment(&mut state, "R1", 36, 0, mipoch(80));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 37, 1, mipoch(40));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(103));
+
+    receive_new_fragment(&mut state, "R1", 37, 0, mipoch(80));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "L1", 58, 0, mipoch(120));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+}
+
+#[test]
 fn chain_2_combo() {
     let ruleset = mock_ruleset();
     let mut state = State::new();
@@ -108,6 +135,33 @@ fn chain_2_combo() {
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(116));
 
     receive_new_fragment(&mut state, "L1", 29, 0, mipoch(120));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+}
+
+#[test]
+fn consecutive_chain_2_combos() {
+    let ruleset = mock_ruleset();
+    let mut state = State::new();
+
+    // rule!(L1 29, R1 36 => 116) : modifier : Ctrl + J to VolumeDown
+    // rule!(L1 29, R1 37 => 115) : modifier : Ctrl + K to VolumeUp
+
+    receive_new_fragment(&mut state, "L1", 29, 1, mipoch(0));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 36, 1, mipoch(40));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 36, 0, mipoch(80));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(116));
+
+    receive_new_fragment(&mut state, "R1", 37, 1, mipoch(100));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 37, 0, mipoch(120));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(115));
+
+    receive_new_fragment(&mut state, "L1", 29, 0, mipoch(200));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
 }
 
@@ -149,10 +203,46 @@ fn should_do_nothing_if_combo_not_mapped() {
     receive_new_fragment(&mut state, "R1", 88, 1, mipoch(40));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
 
-    receive_new_fragment(&mut state, "L1", 58, 0, mipoch(100));
+    receive_new_fragment(&mut state, "R1", 88, 0, mipoch(140));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
 
-    receive_new_fragment(&mut state, "R1", 88, 0, mipoch(140));
+    receive_new_fragment(&mut state, "L1", 58, 0, mipoch(100));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+}
+
+#[test]
+fn should_do_nothing_if_crazier_combo_not_mapped() {
+    let ruleset = mock_ruleset();
+    let mut state = State::new();
+
+    receive_new_fragment(&mut state, "L1", 58, 1, mipoch(0));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 88, 1, mipoch(40));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 88, 0, mipoch(50));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 88, 1, mipoch(60));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 89, 1, mipoch(100));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 90, 1, mipoch(150));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 90, 0, mipoch(200));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 89, 0, mipoch(250));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "L1", 88, 0, mipoch(300));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 58, 0, mipoch(350));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
 }
 

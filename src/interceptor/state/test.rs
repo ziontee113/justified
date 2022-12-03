@@ -232,29 +232,6 @@ fn can_get_identifiers_before_key_up_event() {
 }
 
 #[test]
-fn can_update_key_up_counter() {
-    let mut state = State::new();
-
-    receive_new_fragment(&mut state, "L1", 58, 1, mipoch(100));
-    assert_eq!(state.key_up_counter, 0);
-
-    receive_new_fragment(&mut state, "R1", 36, 1, mipoch(150));
-    assert_eq!(state.key_up_counter, 0);
-
-    receive_new_fragment(&mut state, "R1", 37, 1, mipoch(180));
-    assert_eq!(state.key_up_counter, 0);
-
-    receive_new_fragment(&mut state, "R1", 37, 0, mipoch(200));
-    assert_eq!(state.key_up_counter, 1);
-
-    receive_new_fragment(&mut state, "R1", 36, 0, mipoch(220));
-    assert_eq!(state.key_up_counter, 2);
-
-    receive_new_fragment(&mut state, "L1", 58, 0, mipoch(250));
-    assert_eq!(state.key_up_counter, 3);
-}
-
-#[test]
 fn can_update_key_down_counter() {
     let mut state = State::new();
 
@@ -268,10 +245,10 @@ fn can_update_key_down_counter() {
     assert_eq!(state.key_down_counter, 3);
 
     receive_new_fragment(&mut state, "R1", 37, 0, mipoch(200));
-    assert_eq!(state.key_down_counter, 0);
+    assert_eq!(state.key_down_counter, 2);
 
     receive_new_fragment(&mut state, "R1", 36, 0, mipoch(220));
-    assert_eq!(state.key_down_counter, 0);
+    assert_eq!(state.key_down_counter, 1);
 
     receive_new_fragment(&mut state, "L1", 58, 0, mipoch(250));
     assert_eq!(state.key_down_counter, 0);

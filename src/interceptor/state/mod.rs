@@ -13,8 +13,6 @@ pub struct State {
 
     identifiers_before_key_up_event: Vec<KeyIdentifier>,
 
-    key_up_combo_count: u16,
-    key_up_counter: u16,
     key_down_combo_count: u16,
     key_down_counter: u16,
 }
@@ -29,8 +27,6 @@ impl State {
 
             identifiers_before_key_up_event: vec![],
 
-            key_up_counter: 0,
-            key_up_combo_count: 0,
             key_down_counter: 0,
             key_down_combo_count: 0,
         }
@@ -41,16 +37,13 @@ impl State {
             self.identifiers_before_key_up_event = self.sequence_identifiers();
             self.remove_fragment(fragment);
 
-            self.key_up_counter += 1;
-            self.key_down_counter = 0;
+            self.key_down_counter -= 1;
         }
 
         if fragment.value() == KeyState::Down {
             self.add_fragment(fragment.clone());
 
-            self.key_up_counter = 0;
             self.key_down_counter += 1;
-
             self.key_down_combo_count = self.key_down_counter;
         }
 
