@@ -178,11 +178,11 @@ fn state_can_save_latest_up_down_value_and_key() {
 
     receive_new_fragment(&mut state, "L1", 32, 1, mipoch(0));
     assert_eq!(state.latest_value, KeyState::Down);
-    assert!(state.latest_key.is("L1", 32));
+    assert!(state.latest_key.as_ref().unwrap().is("L1", 32));
 
     receive_new_fragment(&mut state, "L1", 32, 0, mipoch(25));
     assert_eq!(state.latest_value, KeyState::Up);
-    assert!(state.latest_key.is("L1", 32));
+    assert!(state.latest_key.as_ref().unwrap().is("L1", 32));
 }
 
 #[test]

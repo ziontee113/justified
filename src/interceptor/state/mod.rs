@@ -1,7 +1,7 @@
 #[cfg(test)]
 pub mod test;
 
-use crate::{ki, units::KeyIdentifier};
+use crate::units::KeyIdentifier;
 
 use super::incoming_fragment::{IncomingFragment, KeyState};
 
@@ -9,7 +9,7 @@ pub struct State {
     sequence: Vec<IncomingFragment>,
 
     latest_value: KeyState,
-    latest_key: KeyIdentifier,
+    latest_key: Option<KeyIdentifier>,
 
     identifiers_before_key_up_event: Vec<KeyIdentifier>,
 
@@ -25,7 +25,7 @@ impl State {
             sequence: vec![],
 
             latest_value: KeyState::Uninitiated,
-            latest_key: ki!(__HACK_FRAUD_KEYBOARD_ALIAS__PLZ_COME_UP_WITH_BETTER_SOLUTION__ 0),
+            latest_key: None,
 
             identifiers_before_key_up_event: vec![],
 
@@ -55,7 +55,7 @@ impl State {
         }
 
         self.latest_value = fragment.value();
-        self.latest_key = fragment.key().clone();
+        self.latest_key = Some(fragment.key().clone());
     }
 
     pub fn sequence(&self) -> &[IncomingFragment] {
@@ -66,7 +66,7 @@ impl State {
         self.latest_value
     }
 
-    pub fn latest_key_identifier(&self) -> KeyIdentifier {
+    pub fn latest_key_identifier(&self) -> Option<KeyIdentifier> {
         self.latest_key.clone()
     }
 
