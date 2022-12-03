@@ -28,6 +28,8 @@ fn non_prefix_key_down_and_up() {
     let ruleset = mock_ruleset();
     let mut state = State::new();
 
+    // rule!(L1 1 => 58) : non-modifier : map Esc to Capslock
+
     receive_new_fragment(&mut state, "L1", 1, 1, mipoch(0));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(58));
 
@@ -39,9 +41,13 @@ fn non_prefix_key_down_and_up() {
 fn consecutive_non_prefix_key_down_and_up() {
     let ruleset = mock_ruleset();
 
+    // rule!(L1 1 => 58) : non-modifier : map Esc to Capslock
+
     let mut state = State::new();
     receive_new_fragment(&mut state, "L1", 1, 1, mipoch(0));
     receive_new_fragment(&mut state, "L1", 1, 0, mipoch(40));
+
+    // rule!(L1 110 => 127) : non-modifier : map Insert to Compose
 
     receive_new_fragment(&mut state, "L1", 110, 1, mipoch(100));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(127));
@@ -55,6 +61,8 @@ fn modifier_key_down_and_up() {
     let ruleset = mock_ruleset();
     let mut state = State::new();
 
+    // rule!(L1 1 => 58) : modifier : map Esc to Capslock
+
     receive_new_fragment(&mut state, "L1", 58, 1, mipoch(0));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
 
@@ -66,6 +74,8 @@ fn modifier_key_down_and_up() {
 fn basic_combo() {
     let ruleset = mock_ruleset();
     let mut state = State::new();
+
+    // rule!(L1 58, R1 36 => 108) : non-modifier : Capslock + J to Down
 
     receive_new_fragment(&mut state, "L1", 58, 1, mipoch(0));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
@@ -85,6 +95,9 @@ fn chain_2_combo() {
     let ruleset = mock_ruleset();
     let mut state = State::new();
 
+    // rule!(L1 29, R1 36 => 116) : modifier : Ctrl + J to VolumeDown
+    // rule!(L1 29, R1 37 => 115) : modifier : Ctrl + K to VolumeUp
+
     receive_new_fragment(&mut state, "L1", 29, 1, mipoch(0));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
 
@@ -95,5 +108,32 @@ fn chain_2_combo() {
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(116));
 
     receive_new_fragment(&mut state, "L1", 29, 0, mipoch(120));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+}
+
+#[test]
+fn chain_3_combo() {
+    let ruleset = mock_ruleset();
+    let mut state = State::new();
+
+    // rule!(L1 29, R1 36, R1 37 => 26) : non-modifier : Ctrl + J + K to LeftBrace
+    // rule!(L1 29, R1 37, R1 36 => 27) : non-modifier : Ctrl + K + J to RightBrace
+
+    receive_new_fragment(&mut state, "L1", 29, 1, mipoch(0));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 36, 1, mipoch(40));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 37, 1, mipoch(90));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(26));
+
+    receive_new_fragment(&mut state, "R1", 37, 0, mipoch(120));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 36, 0, mipoch(150));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "L1", 29, 0, mipoch(200));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
 }

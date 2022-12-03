@@ -25,7 +25,7 @@ impl State {
             fragments: vec![],
 
             latest_value: KeyState::Uninitiated,
-            latest_key: ki!(__DEV_CLEAN 0),
+            latest_key: ki!(__HACK_FRAUD_KEYBOARD_ALIAS__PLZ_COME_UP_WITH_BETTER_SOLUTION__ 0),
 
             identifiers_before_key_up_event: vec![],
 

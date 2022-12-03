@@ -33,12 +33,12 @@ fn handle_keystate_down(state: &mut State, ruleset: &RuleSet) -> Option<u16> {
 }
 
 fn handle_keystate_up(state: &mut State, ruleset: &RuleSet) -> Option<u16> {
-    let identifiers_before_up_event = state.identifiers_before_up_event();
+    let before_up = state.identifiers_before_up_event();
 
-    if identifiers_before_up_event.len() == state.key_down_combo_count().into()
-        && ruleset.prefixes().contains(identifiers_before_up_event)
+    if before_up.len() == state.key_down_combo_count().into()
+        && ruleset.prefixes().contains(before_up)
     {
-        return ruleset.rules().get(identifiers_before_up_event).copied();
+        return ruleset.rules().get(before_up).copied();
     }
 
     None
