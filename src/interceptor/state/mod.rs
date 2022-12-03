@@ -3,16 +3,20 @@ pub mod test;
 
 use crate::{ki, units::KeyIdentifier};
 
-use super::incoming_fragment::IncomingFragment;
+use super::incoming_fragment::{IncomingFragment, KeyState};
 
 pub struct State {
     fragments: Vec<IncomingFragment>,
 
-    latest_value: i32,
+    latest_value: KeyState,
     latest_key: KeyIdentifier,
 
     identifiers_before_key_up_event: Vec<KeyIdentifier>,
+
     key_up_combo_count: u16,
+    key_up_counter: u16,
+    key_down_combo_count: u16,
+    key_down_counter: u16,
 }
 
 impl State {
@@ -20,24 +24,34 @@ impl State {
         Self {
             fragments: vec![],
 
-            latest_value: -1,
+            latest_value: KeyState::Uninitiated,
             latest_key: ki!(__DEV_CLEAN 0),
 
             identifiers_before_key_up_event: vec![],
+
+            key_up_counter: 0,
             key_up_combo_count: 0,
+            key_down_counter: 0,
+            key_down_combo_count: 0,
         }
     }
 
     pub fn receive(&mut self, fragment: &IncomingFragment) {
-        if fragment.value() == 0 {
+        if fragment.value() == KeyState::Up {
             self.identifiers_before_key_up_event = self.fragment_identifiers();
             self.remove_fragment(fragment);
-            self.key_up_combo_count += 1;
+
+            self.key_up_counter += 1;
+            self.key_down_counter = 0;
         }
 
-        if fragment.value() == 1 {
+        if fragment.value() == KeyState::Down {
             self.add_fragment(fragment.clone());
-            self.key_up_combo_count = 0;
+
+            self.key_up_counter = 0;
+            self.key_down_counter += 1;
+
+            self.key_down_combo_count = self.key_down_counter;
         }
 
         self.latest_value = fragment.value();
@@ -48,7 +62,7 @@ impl State {
         self.fragments.as_ref()
     }
 
-    pub fn latest_value(&self) -> i32 {
+    pub fn latest_value(&self) -> KeyState {
         self.latest_value
     }
 
@@ -60,15 +74,15 @@ impl State {
         self.identifiers_before_key_up_event.as_ref()
     }
 
-    pub fn key_up_combo_count(&self) -> u16 {
-        self.key_up_combo_count
+    pub fn key_down_combo_count(&self) -> u16 {
+        self.key_down_combo_count
     }
 
     pub fn fragment_identifiers(&self) -> Vec<KeyIdentifier> {
         self.fragments().iter().map(|f| f.key().clone()).collect()
     }
 
-    pub fn prefix_identifiers(&self) -> Vec<KeyIdentifier> {
+    pub fn modifier_identifiers(&self) -> Vec<KeyIdentifier> {
         if self.fragments.len() > 1 {
             return self.fragments[0..self.fragments.len() - 1]
                 .iter()
