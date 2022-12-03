@@ -137,3 +137,43 @@ fn chain_3_combo() {
     receive_new_fragment(&mut state, "L1", 29, 0, mipoch(200));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
 }
+
+#[test]
+fn should_do_nothing_if_combo_not_mapped() {
+    let ruleset = mock_ruleset();
+    let mut state = State::new();
+
+    receive_new_fragment(&mut state, "L1", 58, 1, mipoch(0));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 88, 1, mipoch(40));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "L1", 58, 0, mipoch(100));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    receive_new_fragment(&mut state, "R1", 88, 0, mipoch(140));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+}
+
+#[test]
+fn should_return_same_key_if_key_not_mapped() {
+    let ruleset = mock_ruleset();
+    let mut state = State::new();
+
+    // code 87 : F11 key : not mapped
+
+    receive_new_fragment(&mut state, "L1", 87, 1, mipoch(200));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(87));
+
+    receive_new_fragment(&mut state, "L1", 87, 0, mipoch(300));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+
+    // code 88 : F12 key : not mapped
+
+    receive_new_fragment(&mut state, "L1", 88, 1, mipoch(0));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(88));
+
+    receive_new_fragment(&mut state, "L1", 88, 0, mipoch(100));
+    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+}

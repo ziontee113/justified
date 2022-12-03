@@ -17,6 +17,13 @@ fn ruleset_output_to_execute(state: &mut State, ruleset: &RuleSet) -> Option<u16
 }
 
 fn handle_keystate_down(state: &mut State, ruleset: &RuleSet) -> Option<u16> {
+    if state.fragments().len() == 1
+        && !ruleset.prefixes().contains(&state.fragment_identifiers())
+        && !ruleset.rules().contains_key(&state.fragment_identifiers())
+    {
+        return Some(state.fragments().get(0).unwrap().key().code());
+    }
+
     if state.latest_value() == KeyState::Down
         && ruleset.prefixes().contains(&state.fragment_identifiers())
     {
