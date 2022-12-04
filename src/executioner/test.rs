@@ -173,7 +173,7 @@ fn chain_3_combo() {
     // rule!(L1 29, R1 36, R1 37 => 26) : non-modifier : Ctrl + J + K to LeftBrace
     // rule!(L1 29, R1 37, R1 36 => 27) : non-modifier : Ctrl + K + J to RightBrace
 
-    receive_new_fragment(&mut state, "L1", 29, 1, mipoch(0));
+    receive_new_fragment(&mut state, "L1", 29, 1i32, mipoch(0));
     assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
 
     receive_new_fragment(&mut state, "R1", 36, 1, mipoch(40));
@@ -251,21 +251,36 @@ fn should_return_same_key_if_key_not_mapped() {
     let ruleset = mock_ruleset();
     let mut state = State::new();
 
-    // code 87 : F11 key : not mapped
+    let vec = vec![
+        ("this is a message", "L1", 87, 1, mipoch(200), Some(87)),
+        ("this is another", "L1", 87, 1, mipoch(300), None),
+    ];
 
-    receive_new_fragment(&mut state, "L1", 87, 1, mipoch(200));
-    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(87));
+    for item in vec {
+        receive_new_fragment(&mut state, item.1, item.2, item.3, item.4);
+        assert_eq!(
+            ruleset_output_to_execute(&mut state, &ruleset),
+            item.5,
+            "{}",
+            item.0
+        );
+    }
 
-    receive_new_fragment(&mut state, "L1", 87, 0, mipoch(300));
-    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
-
-    // code 88 : F12 key : not mapped
-
-    receive_new_fragment(&mut state, "L1", 88, 1, mipoch(0));
-    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(88));
-
-    receive_new_fragment(&mut state, "L1", 88, 0, mipoch(100));
-    assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+    // // code 87 : F11 key : not mapped
+    //
+    // receive_new_fragment(&mut state, "L1", 87, 1, mipoch(200));
+    // assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(87));
+    //
+    // receive_new_fragment(&mut state, "L1", 87, 0, mipoch(300));
+    // assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
+    //
+    // // code 88 : F12 key : not mapped
+    //
+    // receive_new_fragment(&mut state, "L1", 88, 1, mipoch(0));
+    // assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), Some(88));
+    //
+    // receive_new_fragment(&mut state, "L1", 88, 0, mipoch(100));
+    // assert_eq!(ruleset_output_to_execute(&mut state, &ruleset), None);
 }
 
 // ------------------------------------------------------------- Key Hold Events

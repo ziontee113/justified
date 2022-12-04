@@ -3,7 +3,7 @@ mod test;
 
 use std::{fmt::Display, time::SystemTime};
 
-use crate::units::KeyIdentifier;
+use crate::units::key_identifier::KeyIdentifier;
 
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub enum KeyState {

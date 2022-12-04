@@ -1,7 +1,7 @@
 #[cfg(test)]
 pub mod test;
 
-use crate::units::KeyIdentifier;
+use crate::units::key_identifier::KeyIdentifier;
 
 use super::incoming_fragment::{IncomingFragment, KeyState};
 

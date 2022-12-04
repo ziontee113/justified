@@ -32,7 +32,7 @@ pub fn start() {
 
     // ----------------------------------------------------------------
 
-    let mut virtual_device = devices::output::new().unwrap();
+    // let mut virtual_device = devices::output::new().unwrap();
     let mut state = State::new();
     let ruleset = utils::mock_ruleset();
 
@@ -43,6 +43,10 @@ pub fn start() {
                 let fragment = IncomingFragment::new(&device_alias, code, value, timestamp);
 
                 state.receive(&fragment);
+
+                if value == 1 {
+                    println!("{}", code);
+                }
 
                 let key_to_press = executioner::ruleset_output_to_execute(&mut state, &ruleset);
                 println!("{:?}", key_to_press);

@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::units::KeyIdentifier;
+use crate::units::key_identifier::KeyIdentifier;
 
 use super::rule::Rule;
 

@@ -1,4 +1,4 @@
-use crate::units::KeyIdentifier;
+use crate::units::key_identifier::KeyIdentifier;
 
 #[cfg(test)]
 mod test;
