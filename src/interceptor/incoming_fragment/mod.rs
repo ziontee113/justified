@@ -25,6 +25,17 @@ impl From<i32> for KeyState {
     }
 }
 
+impl From<KeyState> for i32 {
+    fn from(value: KeyState) -> Self {
+        match value {
+            KeyState::Up => 0,
+            KeyState::Down => 1,
+            KeyState::Hold => 2,
+            KeyState::Uninitiated => -1,
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct IncomingFragment {
     key: KeyIdentifier,
