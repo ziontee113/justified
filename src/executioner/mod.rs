@@ -24,9 +24,7 @@ fn handle_keystate_down_or_hold(state: &mut State, ruleset: &RuleSet) -> Option<
         return Some(state.sequence().get(0).unwrap().key().code());
     }
 
-    if state.latest_value() == KeyState::Down
-        && ruleset.prefixes().contains(&state.sequence_identifiers())
-    {
+    if ruleset.prefixes().contains(&state.sequence_identifiers()) {
         return None;
     }
 
