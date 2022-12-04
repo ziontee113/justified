@@ -6,7 +6,7 @@ use crate::{
 #[cfg(test)]
 mod test;
 
-fn ruleset_output_to_execute(state: &mut State, ruleset: &RuleSet) -> Option<u16> {
+pub fn ruleset_output_to_execute(state: &mut State, ruleset: &RuleSet) -> Option<u16> {
     if state.latest_value() == KeyState::Down || state.latest_value() == KeyState::Hold {
         return handle_keystate_down_or_hold(state, ruleset);
     }
