@@ -33,14 +33,6 @@ pub struct IncomingFragment {
 }
 
 impl IncomingFragment {
-    /// # Examples:
-    /// ```
-    /// let fragment = IncomingFragment::new("L1", 34, 1, mipoch(0));
-    /// assert_eq!(fragment.key.device_alias(), "L1");
-    /// assert_eq!(fragment.key.code(), 32);
-    /// assert_eq!(fragment.value(), KeyState::Down);
-    /// assert_eq!(fragment.timestamp(), mipoch(0));
-    /// ```
     pub fn new(device_alias: &str, code: u16, value: i32, timestamp: SystemTime) -> Self {
         Self {
             key: KeyIdentifier::new(device_alias, code),
