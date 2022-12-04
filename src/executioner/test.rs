@@ -244,6 +244,23 @@ fn return_same_key_if_key_not_mapped() {
     );
 }
 
+#[test]
+fn should_return_same_keys_if_combo_not_mapped() {
+    receive_and_assert(
+        &mut State::new(),
+        &mock_ruleset(),
+        vec![
+            tsc!(L1 S, 1, 0 => Some(31), "S down, not mapped, wanted 31 (S)"),
+            tsc!(R1 O, 1, 100 => Some(24), "
+            O down, which looks like a combo,
+            but that \"combo\" is not mapped,
+            wanted 24 (O)"),
+            tsc!(L1 S, 0, 150 => None, "S up, not mapped, expected none"),
+            tsc!(R1 O, 0, 200 => None, "O up, not mapped, expected none"),
+        ],
+    );
+}
+
 // ---------------------------------------------------------------------- Key Hold
 
 #[test]

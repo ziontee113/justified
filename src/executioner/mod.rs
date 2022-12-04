@@ -17,11 +17,10 @@ pub fn ruleset_output_to_execute(state: &mut State, ruleset: &RuleSet) -> Option
 }
 
 fn handle_keystate_down_or_hold(state: &mut State, ruleset: &RuleSet) -> Option<u16> {
-    if state.sequence().len() == 1
-        && !ruleset.prefixes().contains(&state.sequence_identifiers())
+    if !ruleset.prefixes().contains(&state.sequence_identifiers())
         && !ruleset.rules().contains_key(&state.sequence_identifiers())
     {
-        return Some(state.sequence().get(0).unwrap().key().code());
+        return Some(state.sequence().last().unwrap().key().code());
     }
 
     if ruleset.prefixes().contains(&state.sequence_identifiers()) {
